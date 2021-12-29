@@ -11,6 +11,7 @@
     "test:connection": "BABEL_ENV=test mocha --require @babel/register ./test/Connection --watch",
     "test:api": "BABEL_ENV=test mocha --require @babel/register ./test/Api --watch",
     "test:manager": "BABEL_ENV=test mocha --require @babel/register ./test/Manager --watch",
+    "test:storage": "BABEL_ENV=test mocha --require @babel/register ./test/CustomOperations --watch",
     "pretest:browser": "NODE_ENV=dev browserify test/*.js -o browser-test/browser-test.js -t [ babelify ]",
     "test:browser": "BABEL_ENV=test http-server ./browser-test",
     "clean": "rm -rf ./lib/* & rm -rf ./build/*",

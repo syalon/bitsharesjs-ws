@@ -74,12 +74,13 @@ export const network = get("_net");
 export const history = get("_hist");
 export const crypto = get("_crypt");
 export const orders = get("_orders");
+export const custom = get("_custom");
 
 const newApis = () => ({
   connect: (
     cs,
     connectTimeout,
-    optionalApis = { enableCrypto: false, enableOrders: false }
+    optionalApis = { enableCrypto: false, enableOrders: false, enableCustom: false }
   ) => {
     // console.log("INFO\tApiInstances\tconnect\t", cs);
     Apis.url = cs;
@@ -123,6 +124,8 @@ const newApis = () => ({
           Apis._orders = new GrapheneApi(Apis.ws_rpc, "orders");
         if (optionalApis.enableCrypto)
           Apis._crypt = new GrapheneApi(Apis.ws_rpc, "crypto");
+        if (optionalApis.enableCustom)
+          Apis._custom = new GrapheneApi(Apis.ws_rpc, "custom_operations");
         var db_promise = Apis._db.init().then(() => {
           //https://github.com/cryptonomex/graphene/wiki/chain-locked-tx
           return Apis._db.exec("get_chain_id", []).then(_chain_id => {
@@ -141,6 +144,7 @@ const newApis = () => ({
             Apis._hist.init();
             if (optionalApis.enableOrders) Apis._orders.init();
             if (optionalApis.enableCrypto) Apis._crypt.init();
+            if (optionalApis.enableCustom) Apis._custom.init();
           });
         };
         Apis.ws_rpc.on_close = () => {
@@ -152,6 +156,7 @@ const newApis = () => ({
 
         if (optionalApis.enableOrders) initPromises.push(Apis._orders.init());
         if (optionalApis.enableCrypto) initPromises.push(Apis._crypt.init());
+        if (optionalApis.enableCustom) initPromises.push(Apis._custom.init());
         return Promise.all(initPromises);
       })
       .catch(err => {
@@ -176,5 +181,6 @@ const newApis = () => ({
   history_api: () => Apis._hist,
   crypto_api: () => Apis._crypt,
   orders_api: () => Apis._orders,
+  custom_api: () => Apis._custom,
   setRpcConnectionStatusCallback: callback => (Apis.statusCb = callback)
 });
